@@ -1,9 +1,6 @@
 -- ----------------------------
 --  Table structure for alpine_users
 -- ----------------------------
-IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID('[dbo].[alpine_users]') AND type IN ('U'))
-	DROP TABLE [dbo].[alpine_users]
-GO
 CREATE TABLE [dbo].[alpine_users] (
 	[userGUID] uniqueidentifier NOT NULL DEFAULT (newid()) ROWGUIDCOL,
 	[nameFirst] varchar(128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -16,6 +13,130 @@ CREATE TABLE [dbo].[alpine_users] (
 )
 ON [PRIMARY]
 GO
+CREATE UNIQUE NONCLUSTERED INDEX [email-idx]
+ON [dbo].[alpine_users] ([emailAddress] ASC, [isDeleted] ASC)
+WITH (PAD_INDEX = OFF,
+	IGNORE_DUP_KEY = OFF,
+	STATISTICS_NORECOMPUTE = OFF,
+	SORT_IN_TEMPDB = OFF,
+	ONLINE = OFF,
+	ALLOW_ROW_LOCKS = ON,
+	ALLOW_PAGE_LOCKS = ON)
+ON [PRIMARY]
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [email-pw-idx]
+ON [dbo].[alpine_users] ([emailAddress] ASC, [password] ASC, [isDeleted] ASC)
+WITH (PAD_INDEX = OFF,
+	IGNORE_DUP_KEY = OFF,
+	STATISTICS_NORECOMPUTE = OFF,
+	SORT_IN_TEMPDB = OFF,
+	ONLINE = OFF,
+	ALLOW_ROW_LOCKS = ON,
+	ALLOW_PAGE_LOCKS = ON)
+ON [PRIMARY]
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [name-by-last-first-idx]
+ON [dbo].[alpine_users] ([nameLast] ASC, [nameFirst] ASC)
+WITH (PAD_INDEX = OFF,
+	IGNORE_DUP_KEY = OFF,
+	STATISTICS_NORECOMPUTE = OFF,
+	SORT_IN_TEMPDB = OFF,
+	ONLINE = OFF,
+	ALLOW_ROW_LOCKS = ON,
+	ALLOW_PAGE_LOCKS = ON)
+ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[alpine_users] SET (LOCK_ESCALATION = TABLE)
+
+
+
+
+CREATE PROCEDURE [dbo].[alpine_getDupe]
+	@emailAddress varchar(64)
+AS
+	SELECT userGUID
+	FROM alpine_users
+	WHERE
+		isDeleted = 0
+		AND emailAddress = @emailAddress
+
+GO
+
+
+CREATE PROCEDURE [dbo].[alpine_getProfile]
+	@userGUID uniqueidentifier
+AS
+	SELECT
+		emailAddress,
+		nameFirst,
+		nameLast,
+		isAdmin,
+		userGUID
+	FROM alpine_users
+	WHERE userGUID = @userGUID
+
+GO
+
+
+CREATE PROCEDURE [dbo].[alpine_getUserByEmailPW]
+	@emailAddress varchar(64),
+	@password varchar(128)
+AS
+	SELECT
+		userGUID,
+		nameFirst,
+		isAdmin
+	FROM alpine_users
+	WHERE
+		isDeleted = 0
+		AND emailAddress = @emailAddress
+		AND password = @password
+
+GO
+
+
+CREATE PROCEDURE [dbo].[alpine_getUsers]
+
+AS
+	SELECT
+		userGUID,
+		nameFirst,
+		nameLast,
+		emailAddress,
+		isAdmin
+	FROM alpine_users
+	ORDER BY nameLast, nameFirst
+GO
+
+
+CREATE PROCEDURE [dbo].[alpine_getUserSalt]
+	@emailAddress varchar(64)
+AS
+	SELECT salt
+	FROM alpine_users
+	WHERE
+		isDeleted = 0
+		AND emailAddress = @emailAddress
+GO
+
+
+CREATE PROCEDURE [dbo].[alpine_saveUser]
+	@nameFirst varchar(128),
+	@nameLast varchar(128),
+	@emailAddress varchar(64),
+	@password varchar(128),
+	@salt varchar(128)
+AS
+	INSERT INTO alpine_users ( nameFirst, nameLast, emailAddress, password, salt )
+	VALUES (
+		@nameFirst,
+		@nameLast,
+		@emailAddress,
+		@password,
+		@salt
+	)
+GO
+
 
 -- ----------------------------
 --  Records of alpine_users
