@@ -1,4 +1,10 @@
 <!doctype html><cfoutput>
+
+<!--- no need to login twice --->
+<cfif structkeyexists( session, "userGUID" )>
+	<cflocation url="index.cfm" addtoken="no">
+</cfif>
+
 <html class="no-js" lang="en">
 	<head>
 		<meta charset="utf-8" />

@@ -68,7 +68,7 @@
 									With this amazing app you may create a new account, log in, log out, view your profile, and&mdash;if you're lucky&mdash;view a list of all users.
 								</p>
 								<p>
-									Yes. I know. That's a lot. Take the day off, kick back, and enjoy the ride.
+									Yes, I know. Mind. Blown.
 								</p>
 							</div>
 						</cfif>
