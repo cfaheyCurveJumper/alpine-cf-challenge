@@ -16,8 +16,8 @@
 	<body>
 
 		<div class="grid-x grid-margin-x grid-padding-x grid-padding-y">
-			<div class="cell small-3"></div>
-			<div class="cell small-6">
+			<div class="cell small-4"></div>
+			<div class="cell small-4">
 				<div class="callout">
 					<div class="grid-x">
 
@@ -85,7 +85,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="cell small-3"></div>
+			<div class="cell small-4"></div>
 		</div>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

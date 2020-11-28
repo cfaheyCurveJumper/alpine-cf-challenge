@@ -34,9 +34,18 @@
 								</p>
 							</div>
 							<cfif structkeyexists( session, "isAdmin" ) AND val( session.isAdmin )>
-								<div class="cell small-12 text-center">
-									<h3>Oh wow. You're Mister Manager.</h3>
-									You also get to view the <a href="user-list.cfm">User List</a>
+								<div class="cell small-10 small-offset-1">
+									<div class="card">
+										<div class="card-divider text-center">
+											<p><b>Wow! You're Mister Manager.</b></p>
+										</div>
+										<div class="card-section">
+											<img src="admin-badge.png">
+										</div>
+										<div class="card-section text-center">
+											<p>You also get to view the <a href="user-list.cfm">User List</a></p>
+										</div>
+									</div>
 								</div>
 							</cfif>
 
