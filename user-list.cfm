@@ -16,8 +16,8 @@
 	<body>
 
 		<div class="grid-x grid-margin-x grid-padding-x grid-padding-y">
-			<div class="cell small-3"></div>
-			<div class="cell small-6">
+			<div class="cell small-2"></div>
+			<div class="cell small-8">
 				<div class="callout">
 					<div class="grid-x">
 
@@ -40,6 +40,7 @@
 									userGUID,
 									nameFirst,
 									nameLast,
+									emailAddress,
 									isAdmin
 								FROM alpine_users
 								ORDER BY nameLast, nameFirst
@@ -50,6 +51,7 @@
 									<tr>
 										<th>First</th>
 										<th>Last</th>
+										<th>Email</th>
 										<th>ID</th>
 										<th>Admin</th>
 									</tr>
@@ -59,6 +61,7 @@
 										<tr>
 											<td>#local.getUsers.nameFirst#</td>
 											<td>#local.getUsers.nameLast#</td>
+											<td>#local.getUsers.emailAddress#</td>
 											<td>#local.getUsers.userGUID#</td>
 											<td>
 												<cfif val( local.getUsers.isAdmin )>
