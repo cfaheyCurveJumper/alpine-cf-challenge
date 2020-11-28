@@ -5,6 +5,10 @@
 	<cflocation url="index.cfm" addtoken="no">
 </cfif>
 
+<cfstoredproc datasource="#application.dsn#" procedure="alpine_getUsers">
+	<cfprocresult name="local.getUsers">
+</cfstoredproc>
+
 <html class="no-js" lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -34,17 +38,6 @@
 							</h3>
 						</div>
 						<div class="cell small-12">
-
-							<cfquery name="local.getUsers" datasource="#application.dsn#">
-								SELECT
-									userGUID,
-									nameFirst,
-									nameLast,
-									emailAddress,
-									isAdmin
-								FROM alpine_users
-								ORDER BY nameLast, nameFirst
-							</cfquery>
 
 							<table>
 								<thead>

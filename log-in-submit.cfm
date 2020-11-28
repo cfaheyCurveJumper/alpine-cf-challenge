@@ -8,13 +8,13 @@
 	<cfif structkeyexists( form, "emailAddress" ) AND structkeyexists( form, "password" )>
 
 		<!--- find the matching user record --->
-		<cfquery name="local.getUserSalt" datasource="#application.dsn#">
-			SELECT salt
-			FROM alpine_users
-			WHERE
-				isDeleted = 0
-				AND emailAddress = <cfqueryparam value="#trim( form.emailAddress )#" cfsqltype="CF_SQL_VARCHAR" maxlength="64">
-		</cfquery>
+		<cfstoredproc datasource="#application.dsn#" procedure="alpine_getUserSalt">
+
+			<cfprocparam cfsqltype="CF_SQL_VARCHAR" type="in" value="#left( trim( form.emailAddress ), 64 )#" dbvarname="emailAddress">
+
+			<cfprocresult name="local.getUserSalt">
+
+		</cfstoredproc>
 
 		<!--- no record --->
 		<cfif NOT val( local.getUserSalt.recordcount )>
@@ -25,17 +25,14 @@
 		<cfset local.pwHash = "#hash( '#form.password##local.getUserSalt.salt#', 'SHA-512' )#">
 
 		<!--- query again for a match on user and pw --->
-		<cfquery name="local.getUser" datasource="#application.dsn#">
-			SELECT
-				userGUID,
-				nameFirst,
-				isAdmin
-			FROM alpine_users
-			WHERE
-				isDeleted = 0
-				AND emailAddress = <cfqueryparam value="#trim( form.emailAddress )#" cfsqltype="CF_SQL_VARCHAR" maxlength="64">
-				AND password = <cfqueryparam value="#local.pwHash#" cfsqltype="CF_SQL_CHAR" maxlength="128">
-		</cfquery>
+		<cfstoredproc datasource="#application.dsn#" procedure="alpine_getUserByEmailPW">
+
+			<cfprocparam cfsqltype="CF_SQL_VARCHAR" type="in" value="#left( trim( form.emailAddress ), 64 )#" dbvarname="emailAddress">
+			<cfprocparam cfsqltype="CF_SQL_VARCHAR" type="in" value="#local.pwHash#" dbvarname="password">
+
+			<cfprocresult name="local.getUser">
+
+		</cfstoredproc>
 
 		<!--- no record --->
 		<cfif NOT val( local.getUser.recordcount )>

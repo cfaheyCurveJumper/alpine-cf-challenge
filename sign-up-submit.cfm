@@ -10,13 +10,13 @@
 		<cfparam name="local.msg" default="">
 
 		<!--- check for a matching user email --->
-		<cfquery name="local.getDupe" datasource="#application.dsn#">
-			SELECT userGUID
-			FROM alpine_users
-			WHERE
-				isDeleted = 0
-				AND emailAddress = <cfqueryparam value="#left( trim( form.emailAddress ), 64 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="64">
-		</cfquery>
+		<cfstoredproc datasource="#application.dsn#" procedure="alpine_getDupe">
+
+			<cfprocparam cfsqltype="CF_SQL_VARCHAR" type="in" value="#left( trim( form.emailAddress ), 64 )#" dbvarname="emailAddress">
+
+			<cfprocresult name="local.getDupe">
+
+		</cfstoredproc>
 
 		<!--- dupe email --->
 		<cfif val( local.getDupe.recordcount )>
@@ -45,16 +45,15 @@
 			<cfset local.pwHash = "#hash( '#form.password##local.salt#', 'SHA-512' )#">
 
 			<!--- save the user --->
-			<cfquery datasource="#application.dsn#">
-				INSERT INTO alpine_users ( nameFirst, nameLast, emailAddress, password, salt )
-				VALUES (
-					<cfqueryparam value="#left( trim( form.nameFirst ), 128 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="128">,
-					<cfqueryparam value="#left( trim( form.nameLast ), 128 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="128">,
-					<cfqueryparam value="#left( trim( form.emailAddress ), 64 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="64">,
-					<cfqueryparam value="#local.pwHash#" cfsqltype="CF_SQL_CHAR" maxlength="128">,
-					<cfqueryparam value="#local.salt#" cfsqltype="CF_SQL_CHAR" maxlength="128">
-				)
-			</cfquery>
+			<cfstoredproc datasource="#application.dsn#" procedure="alpine_saveUser">
+
+				<cfprocparam value="#left( trim( form.nameFirst ), 128 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="128" type="in" dbvarname="nameFirst">
+				<cfprocparam value="#left( trim( form.nameLast ), 128 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="128" type="in" dbvarname="nameLast">
+				<cfprocparam value="#left( trim( form.emailAddress ), 64 )#" cfsqltype="CF_SQL_VARCHAR" maxlength="64" type="in" dbvarname="emailAddress">
+				<cfprocparam value="#local.pwHash#" cfsqltype="CF_SQL_CHAR" maxlength="128" type="in" dbvarname="password">
+				<cfprocparam value="#local.salt#" cfsqltype="CF_SQL_CHAR" maxlength="128" type="in" dbvarname="salt">
+
+			</cfstoredproc>
 
 			<cflocation url="log-in.cfm?success=1" addtoken="no">
 

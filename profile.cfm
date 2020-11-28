@@ -5,6 +5,14 @@
 	<cflocation url="index.cfm" addtoken="no">
 </cfif>
 
+<cfstoredproc datasource="#application.dsn#" procedure="alpine_getProfile">
+
+	<cfprocparam cfsqltype="CF_SQL_VARCHAR" type="in" value="#session.userGUID#" dbvarname="userGUID">
+
+	<cfprocresult name="local.getProfile">
+
+</cfstoredproc>
+
 <html class="no-js" lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -34,17 +42,6 @@
 							</h3>
 						</div>
 						<div class="cell small-12">
-
-							<cfquery name="local.getProfile" datasource="#application.dsn#">
-								SELECT
-									emailAddress,
-									nameFirst,
-									nameLast,
-									isAdmin,
-									userGUID
-								FROM alpine_users
-								WHERE userGUID = <cfqueryparam value="#session.userGUID#" cfsqltype="CF_SQL_VARCHAR">
-							</cfquery>
 
 							<table>
 								<thead>
